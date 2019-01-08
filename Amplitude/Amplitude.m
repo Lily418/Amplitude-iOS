@@ -256,11 +256,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [_backgroundQueue setSuspended:YES];
         // Name the queue so runOnBackgroundQueue can tell which queue an operation is running
         _backgroundQueue.name = BACKGROUND_QUEUE_NAME;
-        
+
         [_initializerQueue addOperationWithBlock:^{
 
             self->_uploadTaskID = UIBackgroundTaskInvalid;
-            
+
             NSString *eventsDataDirectory = [AMPUtils platformDataDirectory];
             NSString *propertyListPath = [eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"];
             if (![self->_instanceName isEqualToString:kAMPDefaultInstance]) {
@@ -625,7 +625,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     userProperties = [userProperties copy];
     groups = [groups copy];
     groupProperties = [groupProperties copy];
-    
+
     [self runOnBackgroundQueue:^{
         // Respect the opt-out setting by not sending or storing any events.
         if (self->_optOut)  {
@@ -652,7 +652,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [event setValue:[self truncate:[AMPUtils validateGroups:[self replaceWithEmptyJSON:groups]]] forKey:@"groups"];
         [event setValue:[self truncate:[AMPUtils makeJSONSerializable:[self replaceWithEmptyJSON:groupProperties]]] forKey:@"group_properties"];
         [event setValue:[NSNumber numberWithLongLong:outOfSession ? -1 : self->_sessionId] forKey:@"session_id"];
-        [event setValue:timestamp forKey:@"timestamp"];
+        [event setValue:timestamp forKey:@"time"];
 
         SAFE_ARC_RELEASE(eventProperties);
         SAFE_ARC_RELEASE(apiProperties);
@@ -759,7 +759,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     if ([self->_trackingOptions shouldTrackIDFV] && vendorID) {
         [apiProperties setValue:vendorID forKey:@"ios_idfv"];
     }
-    
+
     if ([self->_trackingOptions shouldTrackLatLng] && _lastKnownLocation != nil) {
         @synchronized (_locationManager) {
             NSMutableDictionary *location = [NSMutableDictionary dictionary];
@@ -880,7 +880,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         }
         _updatingCurrently = YES;
     }
-    
+
     [self runOnBackgroundQueue:^{
 
         // Don't communicate with the server if the user has opted out.
